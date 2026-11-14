@@ -3,7 +3,8 @@
 (function () {
   const S = window.SIEGE;
   const KEY = 'siege-timer-v1';
-  const SPEEDS = { 1: { name: 'Beginner', sec: 120 }, 2: { name: 'Chill', sec: 90 }, 3: { name: 'Standard', sec: 60 }, 4: { name: 'Extreme', sec: 45 } };
+  // deploy: deployment seconds per operator. Extreme is not confirmed; assumed to match its activation time.
+  const SPEEDS = { 1: { name: 'Beginner', sec: 120, deploy: 120 }, 2: { name: 'Chill', sec: 90, deploy: 90 }, 3: { name: 'Standard', sec: 60, deploy: 60 }, 4: { name: 'Extreme', sec: 45, deploy: 45 } };
   const PHASES = ['A', 'D', 'A', 'D'];
   const OTHER = { A: 'D', D: 'A' };
   const LABEL = { A: 'Attackers', D: 'Defenders' };
@@ -11,7 +12,7 @@
 
   const defaults = () => ({
     v: 1, stage: 'setup',
-    cfg: { names: { A: 'Attackers', D: 'Defenders' }, speed: { A: 3, D: 3 }, deploy: true, deployMin: 4, sound: true, vibrate: true, flip: true },
+    cfg: { names: { A: 'Attackers', D: 'Defenders' }, speed: { A: 3, D: 3 }, deploy: true, sound: true, vibrate: true, flip: true },
     ops: { A: 5, D: 5 }, round: 0, phase: 0, deployTurn: 'D',
     left: { A: 0, D: 0 }, running: null, since: 0, paused: false, reacting: null,
     out: { A: false, D: false }, lost: { A: 0, D: 0 }, warned: {}
@@ -39,6 +40,7 @@
   function run(side) { commit(); st.running = side; st.since = now(); st.warned = {}; }
   const phaseSide = () => PHASES[st.phase];
   const perOp = side => SPEEDS[st.cfg.speed[side]].sec * 1000;
+  const deployMs = side => st.ops[side] * SPEEDS[st.cfg.speed[side]].deploy * 1000;
   function fmt(ms) {
     const s = Math.ceil(ms / 1000);
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
@@ -71,7 +73,7 @@
     st.ops = { A: 5, D: 5 }; st.round = 0; st.out = { A: false, D: false }; st.reacting = null; st.paused = false; st.running = null;
     if (st.cfg.deploy) {
       st.stage = 'deploy'; st.deployTurn = 'D';
-      st.left = { A: st.cfg.deployMin * 60000, D: st.cfg.deployMin * 60000 };
+      st.left = { A: deployMs('A'), D: deployMs('D') };
       run('D');
     } else {
       st.stage = 'ready'; st.round = 1;
@@ -272,7 +274,6 @@
         </div>
         <div class="tgrid">
           <label class="tcheck"><input type="checkbox" data-cfg="deploy" ${c.deploy ? 'checked' : ''}> Timed deployment</label>
-          <label>Deployment time per side (minutes)<input class="search" type="number" min="1" max="20" step="0.5" data-cfg="deployMin" value="${c.deployMin}"></label>
           <label class="tcheck"><input type="checkbox" data-cfg="sound" ${c.sound ? 'checked' : ''}> Beeps</label>
           <label class="tcheck"><input type="checkbox" data-cfg="vibrate" ${c.vibrate ? 'checked' : ''}> Vibrate</label>
           <label class="tcheck"><input type="checkbox" data-cfg="flip" ${c.flip ? 'checked' : ''}> Turn the defender's half upside down (players sit opposite)</label>
@@ -287,12 +288,12 @@
         <p><b>Challenges.</b> Tap Challenge to pause while you check the line of sight. The winner adds 30 seconds to their clock or takes 30 from the opponent.</p>
         <p><b>Out of time.</b> A squad that runs out cannot activate more operators this round, and its remaining phase is skipped.</p>
         <p><b>Upkeep.</b> Enter the operators each squad lost. Next round's time is based on who is left. Round 5 can go to overtime when the mission calls for it.</p>
-        <p class="muted">The official app sets deployment time by speed, but those values are not published, so set your own. The screen stays on while the timer runs on browsers that allow it. Keep the phone's ringer on for beeps.</p>
+        <p><b>Deployment.</b> Each side gets time per operator by its speed: Beginner 2:00, Chill 1:30, Standard 1:00, Extreme 0:45. The defender deploys first. Turn timed deployment off if you use a ready-made deployment from the mission book.</p>
+        <p class="muted">The screen stays on while the timer runs on browsers that allow it. Keep the phone's ringer on for beeps.</p>
       </div>`;
     root.querySelectorAll('[data-cfg]').forEach(inp => inp.addEventListener('change', () => {
       const [k, sub] = inp.dataset.cfg.split('.');
       let v = inp.type === 'checkbox' ? inp.checked : inp.value;
-      if (k === 'deployMin') v = Math.min(20, Math.max(1, parseFloat(v) || 4));
       if (k === 'speed') v = +v;
       if (k === 'names') v = String(v).trim() || LABEL[sub];
       if (sub) st.cfg[k][sub] = v; else st.cfg[k] = v;

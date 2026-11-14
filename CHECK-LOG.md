@@ -72,4 +72,4 @@ Tips on each operator page were written from the board text, the stats and the L
 
 | Item | Check |
 |---|---|
-| Deployment time | The official app sets deployment time by speed setting, but the values are not published. The site lets players set their own (default 4 minutes a side). |
+| Extreme deployment time | Beginner 2:00, Chill 1:30 and Standard 1:00 per operator are confirmed. Extreme is assumed to be 0:45 per operator, the same as its activation time. |
