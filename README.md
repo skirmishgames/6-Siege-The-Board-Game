@@ -6,7 +6,8 @@ Live at https://6siege.skirmishgames.app
 
 ## What's in it
 
-- Operators: every operator board from the core box, Years 1 to 5 and Tactical Drop, with Run, Stamina, Destroy rating, weapon dice, special gadget, roles, best range and play tips. Filter by side, role and box.
+- Boxes: what's in each box and expansion, with the contents sheets and links to the operators and maps inside.
+- Operators: every operator board from the core box, Years 1 to 5 and Silent Strike, with Run, Stamina, Destroy rating, weapon dice, special gadget, roles, best range and play tips. Filter by side, role and box.
 - Maps: the official boards and three fan-made boards, with room names for the official maps.
 - Missions: the Bomb, Hostage and Control setups for each map, with component counts and the page in the mission book.
 - Randomiser: draws a map, a mode and two squads of five from the boxes you own.

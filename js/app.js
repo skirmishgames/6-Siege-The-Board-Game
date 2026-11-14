@@ -85,9 +85,10 @@
           <p class="lead">A community guide to 6: Siege - The Board Game. Every operator board in one place, every map with its room names and missions, a game timer, the Living FAQ, a match randomiser and printable draw cards.</p>
           <p><a class="btn" href="#/operators">Browse operators</a> <a class="btn ghost" href="#/randomiser">Random match</a></p>
         </div>
-        <img class="hero-img" src="assets/maps/preview/consulate.jpg" alt="Consulate game board">
+        <a href="#/boxes" class="hero-art"><img src="assets/box-art.webp" alt="6: Siege - The Board Game box" width="925" height="1000"></a>
       </section>
       <div class="tiles">
+        <a class="tile" href="#/boxes"><b>Boxes</b><span>What's in each box and expansion, with links to its operators and maps.</span></a>
         <a class="tile" href="#/operators"><b>Operators</b><span>${nOps} operators plus alternates and recruits. Filter by side, role, box and stats.</span></a>
         <a class="tile" href="#/maps"><b>Maps</b><span>${nMaps} boards, official and fan-made. Official boards have room names.</span></a>
         <a class="tile" href="#/missions"><b>Missions</b><span>${nMissions} Bomb, Hostage and Control setups, split out of the mission books.</span></a>
@@ -281,6 +282,70 @@
 
   // Timer
   views.timer = () => { S.timer.mount(app); };
+
+  // Box index
+  const boxOps = id => S.operators.filter(o => o.box === id).sort((a, b) => a.side.localeCompare(b.side) || a.name.localeCompare(b.name) || vOrder(a) - vOrder(b));
+  const boxMaps = id => S.maps.filter(m => m.pack === id);
+  function boxCounts(b) {
+    const ops = boxOps(b.id), maps = boxMaps(b.id);
+    const parts = [];
+    const std = ops.filter(o => o.variant === 'standard').length, alt = ops.filter(o => o.variant === 'alternate').length, rec = ops.filter(o => o.variant === 'recruit').length;
+    if (std) parts.push(`${std} operators`);
+    if (alt) parts.push(`${alt} alternate${alt === 1 ? '' : 's'}`);
+    if (rec) parts.push(`${rec} recruits`);
+    if (maps.length) parts.push(`${maps.length} map${maps.length === 1 ? '' : 's'}`);
+    return parts.join(' · ');
+  }
+  function boxThumb(b) {
+    if (b.image) return `assets/boxes/${b.image}-thumb.jpg`;
+    const m = boxMaps(b.id)[0];
+    return m ? `assets/maps/preview/${m.image}.jpg` : 'assets/icon.svg';
+  }
+  views.boxes = () => {
+    const group = (title, ids) => `<h2>${esc(title)}</h2><div class="grid wide">${S.boxes.filter(b => ids.includes(b.id)).map(b => `
+      <a class="card" href="#/box/${b.id}">
+        <img class="thumb" style="aspect-ratio:4/3;object-position:center top" loading="lazy" src="${boxThumb(b)}" alt="">
+        <div class="body">
+          <div class="title"><span>${esc(b.name)}</span><span class="tag">${esc(b.short)}</span></div>
+          <div class="small muted">${esc(boxCounts(b) || 'No boards on the site yet')}</div>
+          ${b.family ? `<div class="small">Part of ${esc(b.family)}</div>` : ''}
+        </div>
+      </a>`).join('')}</div>`;
+    app.innerHTML = `
+      <h1>What's in each box</h1>
+      <p class="lead">Every box and expansion, with its contents sheet and links to the operators and maps inside.</p>
+      ${group('Core and operator expansions', ['core', 'y1', 'y2', 'y3', 'y4', 'y5', 'ss', 'zero'])}
+      ${group('Map packs', ['mp1', 'mp2', 'mp3', 'td', 'fan'])}`;
+  };
+  views.box = id => {
+    const b = boxById[id];
+    if (!b) return notFound();
+    const ops = boxOps(id), maps = boxMaps(id);
+    const opCard = o => `<a class="card ${o.side === 'attacker' ? 'att' : 'def'}" href="#/operator/${o.id}">
+        <img class="thumb" loading="lazy" src="assets/operators/thumbs/${o.file}.jpg" alt="">
+        <div class="body"><div class="title"><span>${esc(opTitle(o))}</span></div><div class="small muted">${esc(o.side)}</div></div></a>`;
+    const att = ops.filter(o => o.side === 'attacker'), def = ops.filter(o => o.side === 'defender');
+    const others = S.boxes.filter(x => x.family && x.family === b.family && x.id !== b.id);
+    app.innerHTML = `
+      <p class="small"><a href="#/boxes">&larr; All boxes</a></p>
+      <div class="op-head"><h1>${esc(b.name)}</h1>${b.family ? `<span class="tag">${esc(b.family)}</span>` : ''}</div>
+      <p class="lead">${esc(b.text || '')}</p>
+      ${others.length ? `<p class="small">Also part of ${esc(b.family)}: ${others.map(x => `<a href="#/box/${x.id}">${esc(x.name)}</a>`).join(', ')}</p>` : ''}
+      <div class="detail">
+        <div>
+          ${b.image ? `<img class="box-sheet" src="assets/boxes/${b.image}.jpg" data-zoom="assets/boxes/${b.image}.jpg" alt="Contents of ${esc(b.name)}"><p class="muted small">Contents sheet from the publisher. Tap to open full size.</p>` : ''}
+          ${!b.image && maps.length ? maps.map(m => `<a href="#/map/${m.id}"><img class="board-img" style="margin-bottom:.6rem" src="assets/maps/preview/${m.image}.jpg" alt="${esc(m.name)}"></a>`).join('') : ''}
+        </div>
+        <div>
+          ${att.length ? `<h2 style="margin-top:0;color:var(--att)">Attackers</h2><div class="grid">${att.map(opCard).join('')}</div>` : ''}
+          ${def.length ? `<h2 style="color:var(--def)">Defenders</h2><div class="grid">${def.map(opCard).join('')}</div>` : ''}
+          ${maps.length ? `<h2 ${att.length ? '' : 'style="margin-top:0"'}>Maps</h2><ul class="linklist">${maps.map(m => `<li><a href="#/map/${m.id}"><b>${esc(m.name)}</b></a><span class="small muted">${S.missions.filter(x => x.map === m.id).length} missions</span></li>`).join('')}</ul>` : ''}
+          ${!ops.length && !maps.length ? '<p class="note">No operator board scans for this box on the site yet.</p>' : ''}
+          ${(b.kind.includes('operators') || b.kind.includes('maps')) ? `<p style="margin-top:1rem"><button type="button" class="chip" data-own="${b.id}" aria-pressed="${S.store.owns(b.id)}">${S.store.owns(b.id) ? 'In my boxes' : 'Add to my boxes'}</button></p>` : ''}
+        </div>
+      </div>`;
+    bindOwned(app, () => views.box(id));
+  };
 
   // Maps
   views.maps = () => {
@@ -565,7 +630,7 @@
   function route() {
     const [, name = '', arg] = (location.hash || '#/').split('/');
     const key = name || 'home';
-    $$('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === key || (key === 'operator' && a.dataset.nav === 'operators') || (key === 'map' && a.dataset.nav === 'maps')));
+    $$('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === key || (key === 'operator' && a.dataset.nav === 'operators') || (key === 'map' && a.dataset.nav === 'maps') || (key === 'box' && a.dataset.nav === 'boxes')));
     nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false');
     if (key !== 'timer' && S.timer) S.timer.unmount();
     (views[key] || notFound)(arg && decodeURIComponent(arg));

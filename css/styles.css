@@ -167,6 +167,9 @@ ul.cols { columns: 2 180px; padding-left: 1.1rem; margin: 0 0 .8rem; }
 /* Home */
 .hero { display: grid; gap: 1rem; grid-template-columns: 1fr; align-items: center; margin-bottom: 1rem; }
 @media (min-width: 860px) { .hero { grid-template-columns: 1.1fr 1fr; } }
+.hero-art { display: flex; justify-content: center; }
+.hero-art img { width: min(62vw, 420px); height: auto; filter: drop-shadow(0 14px 24px rgba(0,0,0,.35)); }
+.box-sheet { border-radius: var(--radius); box-shadow: var(--shadow); cursor: zoom-in; max-height: 80vh; width: 100%; object-fit: cover; object-position: top; }
 .hero-img { border-radius: var(--radius); box-shadow: var(--shadow); aspect-ratio: 16/10; object-fit: cover; width: 100%; }
 .tiles { display: grid; gap: .7rem; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .tile { display: block; padding: .9rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: inherit; box-shadow: var(--shadow); }

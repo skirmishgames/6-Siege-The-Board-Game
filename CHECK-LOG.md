@@ -6,11 +6,11 @@ Things on the site that need a second pair of eyes. If you own the game, check a
 
 | Item | What is missing |
 |---|---|
-| Silent Strike | No operator boards yet. Only a contents image. |
+| Zero (alternate) | Pre-order alternate Zero: no board scan on the site yet. |
 | Alternate operators | Fan cards exist for alternate Ash, Dokkaebi, Maverick, Sledge, Zero, Caveira, Melusi and Mozzie, but the site has no scans of their boards. |
-| Tactical Drop boards | Only 1200 px scans. Other boards are 2304 px. |
+| Silent Strike boards | Only 1200 px scans. Other boards are 2304 px. |
 | Tactical Drop maps | Skyscraper and The Villa are low-resolution scans, with no mission book and no room names. |
-| Tactical Drop draw cards | The fan-made card set has no cards for Brava, Grim, Osa, Sens, Azami, Fenrir, Solis or Thorn. |
+| Silent Strike draw cards | The fan-made card set has no cards for Brava, Grim, Osa, Sens, Azami, Fenrir, Solis or Thorn. |
 | Fan map credits | Creators of the House, Kanal and Skyscraper (Breacher VR) boards, the draw cards, the Living FAQ, the solo AI chart and the packaging guide still need to be confirmed for the credits. |
 
 ## Operator data
