@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>6: Siege field guide</title>
+<meta name="description" content="Fan-made field guide for 6: Siege - The Board Game: operators, maps, missions, a match randomiser and printable draw cards.">
+<meta name="theme-color" content="#0f1720">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css?v=202611141332">
+<script>try{var t=localStorage.getItem('siege-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/"><img src="assets/icon.svg" alt="" width="28" height="28"><span>6: Siege <small>field guide</small></span></a>
+  <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch light or dark mode" title="Light or dark">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36A5.5 5.5 0 0 1 13.36 3.1 9.3 9.3 0 0 0 12 3z"/></svg>
+  </button>
+  <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+  </button>
+  <nav class="nav" id="nav">
+    <a href="#/operators" data-nav="operators">Operators</a>
+    <a href="#/maps" data-nav="maps">Maps</a>
+    <a href="#/missions" data-nav="missions">Missions</a>
+    <a href="#/randomiser" data-nav="randomiser">Randomiser</a>
+    <a href="#/cards" data-nav="cards">Print cards</a>
+    <a href="#/tips" data-nav="tips">Tips</a>
+    <a href="#/resources" data-nav="resources">Resources</a>
+    <a href="#/about" data-nav="about">About</a>
+  </nav>
+</header>
+<main id="app" tabindex="-1"></main>
+<div class="lightbox" id="lightbox" hidden>
+  <button class="icon-btn lb-close" type="button" aria-label="Close">&times;</button>
+  <div class="lb-body"><img alt=""></div>
+</div>
+<footer class="foot">
+  <p>Fan project. Not affiliated with Ubisoft, Steamforged Games or Mythic Games. Contact: <a href="mailto:games@staroversky.com">games@staroversky.com</a></p>
+</footer>
+<script src="js/data/boxes.js?v=202611141332"></script>
+<script src="js/data/operators.js?v=202611141332"></script>
+<script src="js/data/maps.js?v=202611141332"></script>
+<script src="js/data/tips.js?v=202611141332"></script>
+<script src="js/store.js?v=202611141332"></script>
+<script src="js/print.js?v=202611141332"></script>
+<script src="js/app.js?v=202611141332"></script>
+</body>
+</html>

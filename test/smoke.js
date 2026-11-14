@@ -1,0 +1,37 @@
+// Playwright smoke test. Serve the site first: python3 -m http.server 8765
+// Usage: node test/smoke.js [base url]
+const { chromium } = require('playwright');
+const base = process.argv[2] || 'http://localhost:8765/';
+(async () => {
+  const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+  const check = async (hash, sel, label) => {
+    await page.goto(base + hash);
+    await page.waitForSelector(sel, { timeout: 5000 });
+    console.log('ok', label);
+  };
+  await check('#/', '.tiles', 'home');
+  await check('#/operators', '#list .card', 'operators');
+  await check('#/operator/ash', '.board-img', 'operator detail');
+  await check('#/maps', '.grid .card', 'maps');
+  await check('#/map/bank', '#mapImg', 'map detail');
+  await check('#/missions', '.mission', 'missions');
+  await check('#/randomiser', '.slot', 'randomiser');
+  await check('#/cards', '.card-pick input', 'cards');
+  await check('#/tips', '.tip', 'tips');
+  await check('#/resources', '.linklist li', 'resources');
+  await check('#/about', '.panel', 'about');
+  // Build a small PDF
+  await page.goto(base + '#/cards');
+  await page.click('[data-none="0"]'); await page.click('[data-none="1"]');
+  for (let g = 2; g < 5; g++) { const b = await page.$(`[data-none="${g}"]`); if (b) await b.click(); }
+  await page.click('.card-pick label >> nth=0'); if (!(await page.isChecked('.card-pick input >> nth=0'))) throw new Error('card did not toggle');
+  const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 15000 }), page.click('#makePdf')]);
+  console.log('ok pdf', await dl.suggestedFilename());
+  await browser.close();
+  if (errors.length) { console.error('Console errors:\n' + errors.join('\n')); process.exit(1); }
+  console.log('All checks passed');
+})().catch(e => { console.error(e); process.exit(1); });
