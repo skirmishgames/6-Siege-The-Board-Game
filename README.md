@@ -6,13 +6,15 @@ Live at https://6siege.skirmishgames.app
 
 ## What's in it
 
-- Operators: every operator board from the core box, Years 1 to 5 and Tactical Drop, with Run, Stamina, Destroy rating, weapon dice, special gadget, roles and best range. Filter by side, role and box.
+- Operators: every operator board from the core box, Years 1 to 5 and Tactical Drop, with Run, Stamina, Destroy rating, weapon dice, special gadget, roles, best range and play tips. Filter by side, role and box.
 - Maps: the official boards and three fan-made boards, with room names for the official maps.
 - Missions: the Bomb, Hostage and Control setups for each map, with component counts and the page in the mission book.
 - Randomiser: draws a map, a mode and two squads of five from the boxes you own.
 - Print cards: fan-made draw cards as A4 PDF sheets with crop marks, with optional backs for double-sided printing.
 - Tips: advice rewritten from Steamforged Games' crowdfunding updates.
-- Resources: the Living FAQ, the Hostile Tactical AI solo chart, the deluxe packaging guide and other community files.
+- Timer: a phone game clock that follows the round structure, with reactions, challenges and upkeep.
+- Living FAQ: the community rulings from Discord as a searchable page, linked from each operator.
+- Resources: the Hostile Tactical AI solo chart, the deluxe packaging guide and other community files.
 
 The official rulebooks are not hosted here. The site gives book and page references instead.
 

@@ -189,3 +189,58 @@ ul.cols { columns: 2 180px; padding-left: 1.1rem; margin: 0 0 .8rem; }
 .empty { padding: 2rem 1rem; text-align: center; color: var(--muted); }
 .note { background: var(--surface-2); border-radius: 8px; padding: .6rem .8rem; font-size: .92rem; }
 @media print { .top, .foot { display: none; } }
+
+/* Timer */
+.tgrid { display: grid; gap: .7rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: .8rem; }
+.tgrid label { display: flex; flex-direction: column; gap: .25rem; font-size: .9rem; color: var(--muted); }
+.tgrid select, .tgrid input:not([type="checkbox"]) { padding: .55rem .6rem; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 1rem; }
+.tgrid label.tcheck { flex-direction: row; align-items: center; gap: .5rem; color: var(--text); }
+.tcheck input { width: 20px; height: 20px; }
+body.timer-mode { overflow: hidden; }
+body.timer-mode .top, body.timer-mode .foot { display: none; }
+body.timer-mode main { padding: 0; max-width: none; }
+.tscreen { position: fixed; inset: 0; display: flex; flex-direction: column; background: #0b1117; color: #e6edf4; z-index: 40; user-select: none; -webkit-user-select: none; touch-action: manipulation; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+.tpanel { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; padding: 1rem; text-align: center; opacity: .55; transition: opacity .2s, background .2s; }
+.tpanel.att { background: #10233a; }
+.tpanel.def { background: #3a1f10; }
+.tpanel.on { opacity: 1; }
+.tpanel.att.on { background: #1d4f8a; }
+.tpanel.def.on { background: #9a4614; }
+.tpanel.low.on { animation: tpulse 1s infinite; }
+.tpanel.out .ttime { color: #ff8a80; }
+.tpanel.flip { transform: rotate(180deg); }
+@keyframes tpulse { 50% { background: #b3261e; } }
+.tname { font-weight: 800; letter-spacing: .06em; text-transform: uppercase; font-size: 1rem; }
+.ttime { font-size: clamp(64px, 19vw, 160px); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+.tstatus { font-size: 1rem; min-height: 1.4em; }
+.tmeta { font-size: .8rem; opacity: .8; }
+.tbtn { border: 0; border-radius: 12px; padding: .9rem 1.4rem; font-size: 1.15rem; font-weight: 800; background: #f2f5f8; color: #0b1117; cursor: pointer; min-height: 56px; margin-top: .4rem; }
+.tbtn.ghost { background: transparent; color: inherit; border: 2px solid rgba(255,255,255,.55); }
+.tbtn.small { padding: .45rem .8rem; font-size: .9rem; min-height: 40px; margin: 0; }
+.tbar { display: flex; align-items: center; gap: .5rem; padding: .45rem .6rem; background: #0b1117; border-top: 1px solid #2b3a4a; border-bottom: 1px solid #2b3a4a; }
+.tlabel { flex: 1; text-align: center; font-weight: 700; font-size: .95rem; }
+.toverlay { position: absolute; inset: 0; background: rgba(5,10,15,.82); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 2; }
+.toverlay.static { background: rgba(5,10,15,.7); }
+.tsheet { background: #17222e; color: #e6edf4; border-radius: 14px; padding: 1.1rem; width: min(440px, 100%); max-height: 100%; overflow: auto; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.tsheet h2 { margin-top: 0; }
+.tsheet p { color: #c9d4df; }
+.trow { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 .8rem; }
+.tstep { display: flex; align-items: center; gap: .6rem; margin: .5rem 0; }
+.tstep span { flex: 1; }
+.tstep b { min-width: 1.5em; text-align: center; font-size: 1.3rem; }
+@media (orientation: landscape) and (max-height: 520px) {
+  .tscreen { flex-direction: row; }
+  .tpanel.flip { transform: none; }
+  .tbar { flex-direction: column; border: 0; border-left: 1px solid #2b3a4a; border-right: 1px solid #2b3a4a; justify-content: center; width: 120px; }
+  .ttime { font-size: clamp(48px, 12vw, 120px); }
+}
+
+/* FAQ */
+.faq-item { padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.faq-item:last-child { border-bottom: 0; }
+.faq-q { font-weight: 700; margin-bottom: .25rem; }
+.faq-a { white-space: pre-line; }
+.faq-item .tag.new { background: #1d4ed8; color: #fff; }
+.faq-item img { border-radius: 8px; margin: .5rem 0; max-width: 420px; width: 100%; cursor: zoom-in; }
+.optips ul { margin: .2rem 0 .8rem; padding-left: 1.1rem; }
+.optips li { margin-bottom: .3rem; }

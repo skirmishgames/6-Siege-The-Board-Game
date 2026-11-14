@@ -53,3 +53,23 @@ Counts were read from the component icons in the mission books.
 | Coastline | "Private Sunrise" label is partly covered. |
 | Chalet | "Bar Stock" and "Lobby Stairs" are vertical text. |
 | Border | "Offices Balcony" and "West Balcony" are vertical text. |
+
+## Operator play tips
+
+Tips on each operator page were written from the board text, the stats and the Living FAQ. They are not official. These rest on readings worth checking:
+
+| Operator | Check |
+|---|---|
+| Doc | Tips treat his two charges as shared between healing and reviving. |
+| Oryx | Tips assume his token resets each upkeep, so one big move per round. |
+| Solis | Timing of her activate, hide and reaction cycle. |
+| Azami | Tips assume a Kiba Barrier can be destroyed like other gadgets. |
+| Brava | The board text has a typo around her drone. Tips follow our reading of it. |
+| Maverick, Nomad, Kali, Zero | "Playing against" tips come from the board alone and are thin. |
+| Recruits | The arrow marks on the boxed dice are not explained in the tips. |
+
+## Timer
+
+| Item | Check |
+|---|---|
+| Deployment time | The official app sets deployment time by speed setting, but the values are not published. The site lets players set their own (default 4 minutes a side). |

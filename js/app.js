@@ -82,7 +82,7 @@
       <section class="hero">
         <div>
           <h1>6: Siege field guide</h1>
-          <p class="lead">A community guide to 6: Siege - The Board Game. Every operator board in one place, every map with its room names and missions, a match randomiser, and printable draw cards.</p>
+          <p class="lead">A community guide to 6: Siege - The Board Game. Every operator board in one place, every map with its room names and missions, a game timer, the Living FAQ, a match randomiser and printable draw cards.</p>
           <p><a class="btn" href="#/operators">Browse operators</a> <a class="btn ghost" href="#/randomiser">Random match</a></p>
         </div>
         <img class="hero-img" src="assets/maps/preview/consulate.jpg" alt="Consulate game board">
@@ -91,10 +91,12 @@
         <a class="tile" href="#/operators"><b>Operators</b><span>${nOps} operators plus alternates and recruits. Filter by side, role, box and stats.</span></a>
         <a class="tile" href="#/maps"><b>Maps</b><span>${nMaps} boards, official and fan-made. Official boards have room names.</span></a>
         <a class="tile" href="#/missions"><b>Missions</b><span>${nMissions} Bomb, Hostage and Control setups, split out of the mission books.</span></a>
+        <a class="tile" href="#/timer"><b>Timer</b><span>Phone game clock for deployment, activation phases, reactions and challenges. No app needed.</span></a>
+        <a class="tile" href="#/faq"><b>Living FAQ</b><span>Searchable community rulings from Discord.</span></a>
         <a class="tile" href="#/randomiser"><b>Randomiser</b><span>Draw a map, mode and two squads from the boxes you own.</span></a>
         <a class="tile" href="#/cards"><b>Print cards</b><span>Fan-made draw cards as A4 sheets with crop marks.</span></a>
         <a class="tile" href="#/tips"><b>Tips</b><span>Advice for new and returning players.</span></a>
-        <a class="tile" href="#/resources"><b>Resources</b><span>Living FAQ, solo AI chart, storage guide and links.</span></a>
+        <a class="tile" href="#/resources"><b>Resources</b><span>Solo AI chart, storage guide, decals and links.</span></a>
       </div>
       <h2>My boxes</h2>
       <p class="muted small">Pick what you own. Operators, maps, the randomiser and print sheets only show these. Saved in this browser.</p>
@@ -208,7 +210,9 @@
             ${o.range ? `<dt>Best range</dt><dd>${esc(o.range)}</dd>` : ''}
           </dl>
           ${o.variant === 'recruit' ? '<div class="note" style="margin-bottom:.6rem">Recruit boards show two plain and two boxed dice per range. All four are listed here. Check the board for how the boxed dice work.</div>' : ''}
-          ${tip ? `<div class="note"><b>Tip:</b> ${esc(tip.text)}</div>` : ''}
+          ${tip ? `<div class="note"><b>From the publisher:</b> ${esc(tip.text)}</div>` : ''}
+          ${playTips(o)}
+          ${faqFor(o)}
           ${related.length ? `<h3 style="margin-top:1rem">Other versions</h3><p>${related.map(r => `<a href="#/operator/${r.id}">${esc(opTitle(r))}</a>`).join(' · ')}</p>` : ''}
           ${o.card ? `<h3 style="margin-top:1rem">Fan draw card</h3><img src="assets/cards/${o.card}.jpg" data-zoom="assets/cards/${o.card}.jpg" alt="Fan-made draw card for ${esc(o.name)}" style="width:140px;border-radius:6px;cursor:zoom-in">` : ''}
         </div>
@@ -216,6 +220,67 @@
       <div class="prevnext"><a class="btn ghost small" href="#/operator/${prev.id}">&larr; ${esc(opTitle(prev))}</a><a class="btn ghost small" href="#/operator/${next.id}">${esc(opTitle(next))} &rarr;</a></div>`;
     $$('[data-jump-role]').forEach(a => a.addEventListener('click', () => { opFilter.roles = new Set([a.dataset.jumpRole]); opFilter.side = o.side; }));
   };
+
+  function playTips(o) {
+    const t = (S.opTips || {})[o.id];
+    if (!t) return '';
+    const link = id => opById[id] ? `<a href="#/operator/${id}">${esc(opTitle(opById[id]))}</a>` : '';
+    return `<div class="optips"><h3 style="margin-top:1rem">How to play ${esc(o.name)}</h3>
+      <ul>${t.play.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+      ${t.against && t.against.length ? `<h3>Playing against ${esc(o.name)}</h3><ul>${t.against.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      ${t.pairs && t.pairs.filter(id => opById[id]).length ? `<p class="small"><b>Works well with:</b> ${t.pairs.map(link).filter(Boolean).join(', ')}</p>` : ''}
+      <p class="muted small">Community tips based on the operator board. Not official.</p></div>`;
+  }
+  function faqFor(o) {
+    const id = baseName(o);
+    const items = S.faq.sections.flatMap(s => s.items).filter(i => (i.ops || []).includes(id));
+    if (!items.length) return '';
+    return `<h3 style="margin-top:1rem">Rulings from the Living FAQ</h3><ul class="linklist">${items.map(i => `<li><span><b>${esc(i.q)}</b><br><span class="small">${esc(i.a)}</span></span></li>`).join('')}</ul>`;
+  }
+
+  // Living FAQ
+  const faqFilter = { q: '', section: 'all', onlyNew: false };
+  views.faq = () => {
+    const F = S.faq;
+    app.innerHTML = `
+      <h1>Living FAQ</h1>
+      <p class="lead">Rules questions answered by the 6: Siege community on Discord. Version ${esc(F.version)}, last reviewed ${esc(F.reviewed)}. Community rulings, not official errata: the official FAQ and the rulebook come first.</p>
+      <div class="toolbar">
+        <input class="search" type="search" id="fq" placeholder="Search questions and answers" value="${esc(faqFilter.q)}" aria-label="Search the FAQ">
+        <div class="chips">
+          <button type="button" class="chip" data-sec="all" aria-pressed="${faqFilter.section === 'all'}">All</button>
+          ${F.sections.map(s => `<button type="button" class="chip" data-sec="${esc(s.title)}" aria-pressed="${faqFilter.section === s.title}">${esc(s.title)}</button>`).join('')}
+          <button type="button" class="chip" id="fnew" aria-pressed="${faqFilter.onlyNew}">New in ${esc(F.version)}</button>
+        </div>
+      </div>
+      <p class="count" id="fcount"></p>
+      <div id="flist"></div>`;
+    const opLinks = ids => (ids || []).filter(id => opById[id]).map(id => `<a href="#/operator/${id}">${esc(opById[id].name)}</a>`).join(', ');
+    const draw = () => {
+      const q = faqFilter.q.trim().toLowerCase();
+      let n = 0;
+      const html = F.sections.filter(s => faqFilter.section === 'all' || s.title === faqFilter.section).map(s => {
+        const items = s.items.filter(i => (!faqFilter.onlyNew || i.new) && (!q || (i.q + ' ' + i.a).toLowerCase().includes(q)));
+        n += items.length;
+        return items.length ? `<section class="panel"><h2 style="margin-top:0">${esc(s.title)}</h2>${items.map(i => `
+          <div class="faq-item" id="${i.id}">
+            <div class="faq-q">${i.new ? '<span class="tag new">New</span> ' : ''}${esc(i.q)}</div>
+            <div class="faq-a">${esc(i.a)}</div>
+            ${i.image ? `<img src="${i.image}" data-zoom="${i.image}" alt="Board example for this question" loading="lazy">` : ''}
+            ${i.ops && i.ops.length ? `<div class="small muted">Operators: ${opLinks(i.ops)}</div>` : ''}
+          </div>`).join('')}</section>` : '';
+      }).join('');
+      $('#fcount').textContent = `${n} question${n === 1 ? '' : 's'}`;
+      $('#flist').innerHTML = html || '<div class="empty">No questions match.</div>';
+    };
+    $('#fq').addEventListener('input', e => { faqFilter.q = e.target.value; draw(); });
+    $$('[data-sec]').forEach(b => b.addEventListener('click', () => { faqFilter.section = b.dataset.sec; $$('[data-sec]').forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); }));
+    $('#fnew').addEventListener('click', e => { faqFilter.onlyNew = !faqFilter.onlyNew; e.currentTarget.setAttribute('aria-pressed', faqFilter.onlyNew); draw(); });
+    draw();
+  };
+
+  // Timer
+  views.timer = () => { S.timer.mount(app); };
 
   // Maps
   views.maps = () => {
@@ -502,6 +567,7 @@
     const key = name || 'home';
     $$('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === key || (key === 'operator' && a.dataset.nav === 'operators') || (key === 'map' && a.dataset.nav === 'maps')));
     nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false');
+    if (key !== 'timer' && S.timer) S.timer.unmount();
     (views[key] || notFound)(arg && decodeURIComponent(arg));
     window.scrollTo(0, 0);
   }
