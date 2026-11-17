@@ -82,7 +82,7 @@
       <section class="hero">
         <div>
           <h1>6: Siege field guide</h1>
-          <p class="lead">A community guide to 6: Siege - The Board Game. Every operator board in one place, every map with its room names and missions, a game timer, the Living FAQ, a match randomiser and printable draw cards.</p>
+          <p class="lead">A community guide to 6: Siege - The Board Game. Every operator board in one place, every map with its room names and missions, a game timer, the official and community FAQ, a match randomiser and printable draw cards.</p>
           <p><a class="btn" href="#/operators">Browse operators</a> <a class="btn ghost" href="#/randomiser">Random match</a></p>
         </div>
         <a href="#/boxes" class="hero-art"><img src="assets/box-art.webp" alt="6: Siege - The Board Game box" width="925" height="1000"></a>
@@ -93,7 +93,7 @@
         <a class="tile" href="#/maps"><b>Maps</b><span>${nMaps} boards, official and fan-made. Official boards have room names.</span></a>
         <a class="tile" href="#/missions"><b>Missions</b><span>${nMissions} Bomb, Hostage and Control setups, split out of the mission books.</span></a>
         <a class="tile" href="#/timer"><b>Timer</b><span>Phone game clock for deployment, activation phases, reactions and challenges. No app needed.</span></a>
-        <a class="tile" href="#/faq"><b>Living FAQ</b><span>Searchable community rulings from Discord.</span></a>
+        <a class="tile" href="#/faq"><b>FAQ</b><span>The official FAQ and community rulings in one searchable page.</span></a>
         <a class="tile" href="#/randomiser"><b>Randomiser</b><span>Draw a map, mode and two squads from the boxes you own.</span></a>
         <a class="tile" href="#/cards"><b>Print cards</b><span>Fan-made draw cards as A4 sheets with crop marks.</span></a>
         <a class="tile" href="#/tips"><b>Tips</b><span>Advice for new and returning players.</span></a>
@@ -232,51 +232,69 @@
       ${t.pairs && t.pairs.filter(id => opById[id]).length ? `<p class="small"><b>Works well with:</b> ${t.pairs.map(link).filter(Boolean).join(', ')}</p>` : ''}
       <p class="muted small">Community tips based on the operator board. Not official.</p></div>`;
   }
+  const faqSections = () => [
+    ...S.ofaq.sections.map(s => ({ ...s, src: 'official' })),
+    ...S.faq.sections.map(s => ({ ...s, src: 'community' }))
+  ];
+  const srcTag = src => `<span class="tag ${src === 'official' ? 'off' : 'com'}">${src === 'official' ? 'Official' : 'Community'}</span>`;
   function faqFor(o) {
     const id = baseName(o);
-    const items = S.faq.sections.flatMap(s => s.items).filter(i => (i.ops || []).includes(id));
+    const items = faqSections().flatMap(s => s.items.map(i => ({ ...i, src: s.src }))).filter(i => (i.ops || []).includes(id));
     if (!items.length) return '';
-    return `<h3 style="margin-top:1rem">Rulings from the Living FAQ</h3><ul class="linklist">${items.map(i => `<li><span><b>${esc(i.q)}</b><br><span class="small">${esc(i.a)}</span></span></li>`).join('')}</ul>`;
+    return `<h3 style="margin-top:1rem">Rulings from the FAQs</h3><ul class="linklist">${items.map(i => `<li><span>${srcTag(i.src)} <b>${i.topic ? esc(i.topic) + ': ' : ''}${esc(i.q)}</b><br><span class="small faq-a">${esc(i.a)}</span></span></li>`).join('')}</ul>`;
   }
 
-  // Living FAQ
-  const faqFilter = { q: '', section: 'all', onlyNew: false };
+  // FAQ: official (publisher) and community (Living FAQ) together
+  const faqFilter = { q: '', src: 'all', section: 'all', onlyNew: false };
   views.faq = () => {
-    const F = S.faq;
+    const F = S.faq, O = S.ofaq;
+    const all = faqSections();
+    const count = src => all.filter(s => src === 'all' || s.src === src).reduce((n, s) => n + s.items.length, 0);
     app.innerHTML = `
-      <h1>Living FAQ</h1>
-      <p class="lead">Rules questions answered by the 6: Siege community on Discord. Version ${esc(F.version)}, last reviewed ${esc(F.reviewed)}. Community rulings, not official errata: the official FAQ and the rulebook come first.</p>
+      <h1>FAQ</h1>
+      <p class="lead">Two sources in one place. <b>Official</b> is the publisher's FAQ dated ${esc(O.date)}: errata, rulebook questions and operator clarifications. <b>Community</b> is the Living FAQ from Discord, version ${esc(F.version)}, last reviewed ${esc(F.reviewed)}. Community rulings are not official, so the official FAQ and the rulebook come first.</p>
       <div class="toolbar">
         <input class="search" type="search" id="fq" placeholder="Search questions and answers" value="${esc(faqFilter.q)}" aria-label="Search the FAQ">
-        <div class="chips">
-          <button type="button" class="chip" data-sec="all" aria-pressed="${faqFilter.section === 'all'}">All</button>
-          ${F.sections.map(s => `<button type="button" class="chip" data-sec="${esc(s.title)}" aria-pressed="${faqFilter.section === s.title}">${esc(s.title)}</button>`).join('')}
-          <button type="button" class="chip" id="fnew" aria-pressed="${faqFilter.onlyNew}">New in ${esc(F.version)}</button>
-        </div>
       </div>
+      <div class="chips" id="fsrc" role="group" aria-label="Source">
+        ${[['all', 'All sources'], ['official', 'Official'], ['community', 'Community']].map(([k, n]) => `<button type="button" class="chip" data-src="${k}" aria-pressed="${faqFilter.src === k}">${n} (${count(k)})</button>`).join('')}
+      </div>
+      <div class="chips" id="fsec" role="group" aria-label="Topic" style="margin-top:.4rem"></div>
       <p class="count" id="fcount"></p>
       <div id="flist"></div>`;
     const opLinks = ids => (ids || []).filter(id => opById[id]).map(id => `<a href="#/operator/${id}">${esc(opById[id].name)}</a>`).join(', ');
+    const drawChips = () => {
+      const secs = all.filter(s => faqFilter.src === 'all' || s.src === faqFilter.src);
+      if (faqFilter.section !== 'all' && !secs.some(s => s.title === faqFilter.section)) faqFilter.section = 'all';
+      $('#fsec').innerHTML = `<button type="button" class="chip" data-sec="all" aria-pressed="${faqFilter.section === 'all'}">All topics</button>`
+        + secs.map(s => `<button type="button" class="chip" data-sec="${esc(s.title)}" aria-pressed="${faqFilter.section === s.title}">${esc(s.title)}</button>`).join('')
+        + (faqFilter.src !== 'official' ? `<button type="button" class="chip" id="fnew" aria-pressed="${faqFilter.onlyNew}">New in ${esc(F.version)}</button>` : '');
+      $$('[data-sec]').forEach(b => b.addEventListener('click', () => { faqFilter.section = b.dataset.sec; drawChips(); draw(); }));
+      const fn = $('#fnew');
+      if (fn) fn.addEventListener('click', () => { faqFilter.onlyNew = !faqFilter.onlyNew; drawChips(); draw(); });
+    };
     const draw = () => {
       const q = faqFilter.q.trim().toLowerCase();
+      const showNew = faqFilter.onlyNew && faqFilter.src !== 'official';
       let n = 0;
-      const html = F.sections.filter(s => faqFilter.section === 'all' || s.title === faqFilter.section).map(s => {
-        const items = s.items.filter(i => (!faqFilter.onlyNew || i.new) && (!q || (i.q + ' ' + i.a).toLowerCase().includes(q)));
+      const html = all.filter(s => (faqFilter.src === 'all' || s.src === faqFilter.src) && (faqFilter.section === 'all' || s.title === faqFilter.section)).map(s => {
+        const items = s.items.filter(i => (!showNew || (s.src === 'community' && i.new)) && (!q || ((i.topic || '') + ' ' + (i.kind || '') + ' ' + i.q + ' ' + i.a).toLowerCase().includes(q)));
         n += items.length;
-        return items.length ? `<section class="panel"><h2 style="margin-top:0">${esc(s.title)}</h2>${items.map(i => `
+        return items.length ? `<section class="panel"><h2 style="margin-top:0">${esc(s.title)}${faqFilter.src === 'all' ? ' ' + srcTag(s.src) : ''}</h2>${items.map(i => `
           <div class="faq-item" id="${i.id}">
-            <div class="faq-q">${i.new ? '<span class="tag new">New</span> ' : ''}${esc(i.q)}</div>
+            ${i.topic ? `<div class="small muted">${esc(i.topic)}</div>` : ''}
+            <div class="faq-q">${faqFilter.src === 'all' ? srcTag(s.src) + ' ' : ''}${i.new ? '<span class="tag new">New</span> ' : ''}${i.kind ? `<span class="tag kind">${esc(i.kind)}</span> ` : ''}${esc(i.q)}</div>
             <div class="faq-a">${esc(i.a)}</div>
-            ${i.image ? `<img src="${i.image}" data-zoom="${i.image}" alt="Board example for this question" loading="lazy">` : ''}
+            ${i.image ? `<img src="${i.image}" data-zoom="${i.image}" alt="Image for this entry" loading="lazy">` : ''}
             ${i.ops && i.ops.length ? `<div class="small muted">Operators: ${opLinks(i.ops)}</div>` : ''}
           </div>`).join('')}</section>` : '';
       }).join('');
-      $('#fcount').textContent = `${n} question${n === 1 ? '' : 's'}`;
-      $('#flist').innerHTML = html || '<div class="empty">No questions match.</div>';
+      $('#fcount').textContent = `${n} entr${n === 1 ? 'y' : 'ies'}`;
+      $('#flist').innerHTML = html || '<div class="empty">Nothing matches.</div>';
     };
     $('#fq').addEventListener('input', e => { faqFilter.q = e.target.value; draw(); });
-    $$('[data-sec]').forEach(b => b.addEventListener('click', () => { faqFilter.section = b.dataset.sec; $$('[data-sec]').forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); }));
-    $('#fnew').addEventListener('click', e => { faqFilter.onlyNew = !faqFilter.onlyNew; e.currentTarget.setAttribute('aria-pressed', faqFilter.onlyNew); draw(); });
+    $$('[data-src]').forEach(b => b.addEventListener('click', () => { faqFilter.src = b.dataset.src; $$('[data-src]').forEach(x => x.setAttribute('aria-pressed', x === b)); drawChips(); draw(); }));
+    drawChips();
     draw();
   };
 

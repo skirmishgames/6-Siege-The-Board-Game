@@ -244,6 +244,10 @@ body.timer-mode main { padding: 0; max-width: none; }
 .faq-q { font-weight: 700; margin-bottom: .25rem; }
 .faq-a { white-space: pre-line; }
 .faq-item .tag.new { background: #1d4ed8; color: #fff; }
+.tag.off { background: #0f766e; color: #fff; }
+.tag.com { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.tag.kind { background: #fef3c7; color: #78350f; }
+[data-theme="dark"] .tag.kind { background: #78350f; color: #fef3c7; }
 .faq-item img { border-radius: 8px; margin: .5rem 0; max-width: 420px; width: 100%; cursor: zoom-in; }
 .optips ul { margin: .2rem 0 .8rem; padding-left: 1.1rem; }
 .optips li { margin-bottom: .3rem; }

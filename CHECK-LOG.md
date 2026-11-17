@@ -11,6 +11,7 @@ Things on the site that need a second pair of eyes. If you own the game, check a
 | Silent Strike boards | Only 1200 px scans. Other boards are 2304 px. |
 | Tactical Drop maps | Skyscraper and The Villa are low-resolution scans, with no mission book and no room names. |
 | Silent Strike draw cards | The fan-made card set has no cards for Brava, Grim, Osa, Sens, Azami, Fenrir, Solis or Thorn. |
+| Official FAQ | The 20 April 2024 FAQ is typed in from the PDF (35 entries, two images). Check wording and the operator links against the PDF. Longer headings were shortened: the Sledge clarifications are split into three entries with plain titles. Later official FAQ versions are not on the site. The text is the publisher's, so permission to host it is worth asking for with the other official content. |
 | Fan map credits | Creators of the House, Kanal and Skyscraper (Breacher VR) boards, the draw cards, the Living FAQ, the solo AI chart and the packaging guide still need to be confirmed for the credits. |
 
 ## Operator data

@@ -25,6 +25,21 @@ const base = process.argv[2] || 'http://localhost:8765/';
   await check('#/resources', '.linklist li', 'resources');
   await check('#/about', '.panel', 'about');
   await check('#/faq', '.faq-item', 'faq');
+  {
+    const n = async () => (await page.$$('.faq-item')).length;
+    const all = await n();
+    await page.click('[data-src="official"]');
+    const off = await n();
+    await page.click('[data-src="community"]');
+    const com = await n();
+    if (!(off === 35 && com === 54 && all === off + com)) throw new Error('faq counts ' + all + '/' + off + '/' + com);
+    await page.click('[data-src="all"]');
+    const tags = await page.$$eval('.faq-q .tag.off, .faq-q .tag.com', els => els.length);
+    if (tags !== all) throw new Error('faq source tags ' + tags);
+    await page.fill('#fq', 'Gemini');
+    if ((await n()) < 2) throw new Error('faq search');
+    console.log('ok faq filters');
+  }
   await check('#/boxes', '.grid .card', 'boxes');
   await check('#/box/y1', '.box-sheet', 'box detail');
   await check('#/operator/sledge', '.optips', 'operator tips');
