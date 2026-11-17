@@ -17,7 +17,7 @@ Live at https://6siege.skirmishgames.app
 - FAQ: the publisher's Official FAQ (20 April 2024) and the community Living FAQ (1.5.2) on one searchable page, with a filter and a tag for each source, linked from each operator.
 - Resources: the Hostile Tactical AI solo chart, the deluxe packaging guide and other community files.
 
-The official rulebooks are not hosted here. The site gives book and page references instead. The Official FAQ is reproduced as entries on the FAQ page, not as a PDF.
+The official rulebooks are not hosted here. The site gives book and page references instead. The free Official FAQ is the exception: it is reproduced as entries on the FAQ page and offered as a PDF download.
 
 ## Running it locally
 

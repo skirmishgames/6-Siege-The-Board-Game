@@ -253,6 +253,7 @@
     app.innerHTML = `
       <h1>FAQ</h1>
       <p class="lead">Two sources in one place. <b>Official</b> is the publisher's FAQ dated ${esc(O.date)}: errata, rulebook questions and operator clarifications. <b>Community</b> is the Living FAQ from Discord, version ${esc(F.version)}, last reviewed ${esc(F.reviewed)}. Community rulings are not official, so the official FAQ and the rulebook come first.</p>
+      <p><a class="btn ghost small" href="downloads/official-faq-2024-04-20.pdf" download>Download the Official FAQ (PDF, 20 April 2024)</a></p>
       <div class="toolbar">
         <input class="search" type="search" id="fq" placeholder="Search questions and answers" value="${esc(faqFilter.q)}" aria-label="Search the FAQ">
       </div>
